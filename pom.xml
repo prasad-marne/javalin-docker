@@ -4,9 +4,10 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.mygroup.test</groupId>
+	<groupId>com.mygroup</groupId>
 	<artifactId>my-javalin</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -22,8 +23,15 @@
 		</dependency>
 	</dependencies>
 
+	<distributionManagement>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Internal Snapshot Releases</name>
+			<url>your-snapshot-repo-url</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
-		<finalName>my-javalin</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -37,7 +45,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.3</version>
+				<version>3.1.0</version>
 				<executions>
 					<!-- Run shade goal on package phase -->
 					<execution>
@@ -46,9 +54,11 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
 							<transformers>
 								<!-- add Main-Class to manifest file -->
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>HelloWorld</mainClass>
 								</transformer>
 							</transformers>
@@ -71,9 +81,9 @@
 				</executions>
 				<configuration>
 					<repository>localhost:5000/javalin</repository>
-					<tag>latest</tag>
+					<tag>${project.version}</tag>
 					<buildArgs>
-						<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+						<JAR_FILE>${project.build.finalName}-shaded.jar</JAR_FILE>
 					</buildArgs>
 				</configuration>
 			</plugin>
